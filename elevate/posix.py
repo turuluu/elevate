@@ -22,11 +22,17 @@ def quote_applescript(string):
     return '"%s"' % "".join(charmap.get(char, char) for char in string)
 
 
-def elevate(show_console=True, graphical=True):
+def elevate(show_console=True, graphical=True, use_venv=False):
     if os.getuid() == 0:
         return
 
     args = [sys.executable] + sys.argv
+    if use_venv:
+        from pathlib import Path
+        script_dir = Path(sys.executable).parent
+        script_path = script_dir / Path(args[1])
+        args[1] = str(script_path)
+
     commands = []
 
     if graphical:
